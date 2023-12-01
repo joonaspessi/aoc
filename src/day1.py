@@ -7,101 +7,32 @@ def read_file(file_name):
 def part_1(lines):
     numbers = []
     for line in lines:
-        first = None
-        last = None
+        line_sum = []
         for c in line:
             if c.isdigit():
-                first = c
-                break
-        for c in reversed(line):
-            if c.isdigit():
-                last = c
-                break
-        assert first is not None
-        assert last is not None
-        total = int(f"{first}{last}")
+                line_sum.append(c)
+        total = int(line_sum[0] + line_sum[-1])
         numbers.append(total)
     return sum(numbers)
 
 
 def part_2(lines):
-    numbers = []
+    total = 0
     for line in lines:
-        first = None
-        last = None
-        c = 0
-        while c < len(line):
-            if line[c].isdigit():
-                first = line[c]
-                break
-            if line[c:].startswith("one"):
-                first = 1
-                break
-            if line[c:].startswith("two"):
-                first = 2
-                break
-            if line[c:].startswith("three"):
-                first = 3
-                break
-            if line[c:].startswith("four"):
-                first = 4
-                break
-            if line[c:].startswith("five"):
-                first = 5
-                break
-            if line[c:].startswith("six"):
-                first = 6
-                break
-            if line[c:].startswith("seven"):
-                first = 7
-                break
-            if line[c:].startswith("eight"):
-                first = 8
-                break
-            if line[c:].startswith("nine"):
-                first = 9
-                break
-            c += 1
+        line_sum = []
+        for i, c in enumerate(line):
+            if c.isdigit():
+                line_sum.append(c)
 
-        line = line[::-1]
-        c = 0
-        while c < len(line):
-            if line[c].isdigit():
-                last = line[c]
-                break
-            if line[c:].startswith("one"[::-1]):
-                last = 1
-                break
-            if line[c:].startswith("two"[::-1]):
-                last = 2
-                break
-            if line[c:].startswith("three"[::-1]):
-                last = 3
-                break
-            if line[c:].startswith("four"[::-1]):
-                last = 4
-                break
-            if line[c:].startswith("five"[::-1]):
-                last = 5
-                break
-            if line[c:].startswith("six"[::-1]):
-                last = 6
-                break
-            if line[c:].startswith("seven"[::-1]):
-                last = 7
-                break
-            if line[c:].startswith("eight"[::-1]):
-                last = 8
-                break
-            if line[c:].startswith("nine"[::-1]):
-                last = 9
-                break
-            c += 1
+            for d, val in enumerate(
+                ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+            ):
+                if line[i:].startswith(val):
+                    line_sum.append(str(d + 1))
 
-        assert first is not None and last is not None
-        total = int(f"{first}{last}")
-        numbers.append(total)
-    return sum(numbers)
+        line_score = int(line_sum[0] + line_sum[-1])
+        total += line_score
+    return total
 
 
 lines = read_file("inputs/day1.txt")
