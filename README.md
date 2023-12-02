@@ -28,3 +28,11 @@ make test
 ```bash
 make compile-requirements
 ```
+
+### Download input
+
+Get your session cookie from [Advent of Code](https://adventofcode.com/), insert the cookie to `.env` file and run:
+
+```bash
+make download-input
+```

@@ -23,3 +23,7 @@ compile-requirements:
 .PHONY: test
 test:
 	. $(VENV_PATH)/bin/activate; pytest
+
+.PHONY: download-input
+download-input:
+	./download-input.sh $(day)
