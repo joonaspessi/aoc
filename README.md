@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/joonaspessi/aoc2023/actions/workflows/test.yml/badge.svg)](https://github.com/joonaspessi/aoc2023/actions/workflows/test.yml)
 
-My solutions for [Advent of Code 2023](https://adventofcode.com/2023).
+My solutions for [Advent of Code 2023](https://adventofcode.com/2023) in Python.
 
 ## Usage
 
@@ -34,5 +34,7 @@ make compile-requirements
 Get your session cookie from [Advent of Code](https://adventofcode.com/), insert the cookie to `.env` file and run:
 
 ```bash
-make download-input
+make download-input day=x
 ```
+
+where x is the day number.
