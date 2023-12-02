@@ -22,8 +22,12 @@ compile-requirements:
 
 .PHONY: test
 test:
-	. $(VENV_PATH)/bin/activate; pytest
+	. $(VENV_PATH)/bin/activate; python -m pytest
 
 .PHONY: download-input
 download-input:
 	./download-input.sh $(day)
+
+.PHONY: lint
+lint:
+	. $(VENV_PATH)/bin/activate; python -m ruff src
