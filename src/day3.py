@@ -1,16 +1,19 @@
-def read_file(filename):
+from typing import Tuple
+
+
+def read_file(filename: str) -> str:
     with open(filename) as f:
         data = f.read()
     return data
 
 
-def parse_input(input_data):
+def parse_input(input_data: str) -> list[list[str]]:
     input_data = input_data.strip()
     lines = [line.strip() for line in input_data.split("\n")]
     return [list(line) for line in lines]
 
 
-def create_symbol_lookup(grid):
+def create_symbol_lookup(grid: list[list[str]]) -> dict[Tuple[int, int], bool]:
     symbol_lookup = {}
     for y, line in enumerate(grid):
         for x, char in enumerate(line):
@@ -19,7 +22,7 @@ def create_symbol_lookup(grid):
     return symbol_lookup
 
 
-def create_gear_candidate_lookup(grid):
+def create_gear_candidate_lookup(grid: list[list[str]]) -> list[Tuple[int, int]]:
     gear_candidates = []
     for y, line in enumerate(grid):
         for x, char in enumerate(line):
@@ -28,7 +31,9 @@ def create_gear_candidate_lookup(grid):
     return gear_candidates
 
 
-def create_numbers_and_positions(grid):
+def create_numbers_and_positions(
+    grid: list[list[str]]
+) -> list[Tuple[str, list[Tuple[int, int]]]]:
     numbers_and_positions = []
     for y, line in enumerate(grid):
         ongoing_number = ""
@@ -49,7 +54,7 @@ def create_numbers_and_positions(grid):
 
 def filter_numbers_with_adjacent_symbols(
     numbers_and_positions: list, symbol_lookup: dict
-):
+) -> list[int]:
     numbers_with_adjacent_symbols = []
     for number, positions in numbers_and_positions:
         adjacent_symbols = False
@@ -68,7 +73,9 @@ def filter_numbers_with_adjacent_symbols(
     return numbers_with_adjacent_symbols
 
 
-def is_adjacent(positions, gear_candidate):
+def is_adjacent(
+    positions: list[Tuple[int, int]], gear_candidate: Tuple[int, int]
+) -> bool:
     for position in positions:
         y, x = position
         gy, gx = gear_candidate
@@ -77,7 +84,10 @@ def is_adjacent(positions, gear_candidate):
     return False
 
 
-def gear_ratios(numbers_and_positions, gear_candidate_lookup):
+def gear_ratios(
+    numbers_and_positions: list[Tuple[str, list[Tuple[int, int]]]],
+    gear_candidate_lookup: list[Tuple[int, int]],
+) -> list[int]:
     gear_ratios = []
     for gear_candidate in gear_candidate_lookup:
         count = 0
@@ -92,7 +102,7 @@ def gear_ratios(numbers_and_positions, gear_candidate_lookup):
     return gear_ratios
 
 
-def part_1(input_data):
+def part_1(input_data: str) -> int:
     grid = parse_input(input_data)
     symbol_lookup = create_symbol_lookup(grid)
     numbers_and_positions = create_numbers_and_positions(grid)
@@ -102,7 +112,7 @@ def part_1(input_data):
     return sum(numbers_with_adjacent_symbols)
 
 
-def part_2(input_data):
+def part_2(input_data: str) -> int:
     grid = parse_input(input_data)
     gear_candidate_lookup = create_gear_candidate_lookup(grid)
     numbers_and_positions = create_numbers_and_positions(grid)
