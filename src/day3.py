@@ -10,13 +10,22 @@ def parse_input(input_data):
     return [list(line) for line in lines]
 
 
-def create_symbol_lookup(grid, symbol_lookup=None):
+def create_symbol_lookup(grid):
     symbol_lookup = {}
     for y, line in enumerate(grid):
         for x, char in enumerate(line):
             if not char.isdigit() and char != ".":
                 symbol_lookup[(y, x)] = True
     return symbol_lookup
+
+
+def create_gear_candidate_lookup(grid):
+    gear_candidates = []
+    for y, line in enumerate(grid):
+        for x, char in enumerate(line):
+            if char == "*":
+                gear_candidates.append((y, x))
+    return gear_candidates
 
 
 def create_numbers_and_positions(grid):
@@ -59,6 +68,30 @@ def filter_numbers_with_adjacent_symbols(
     return numbers_with_adjacent_symbols
 
 
+def is_adjacent(positions, gear_candidate):
+    for position in positions:
+        y, x = position
+        gy, gx = gear_candidate
+        if abs(y - gy) <= 1 and abs(x - gx) <= 1:
+            return True
+    return False
+
+
+def gear_ratios(numbers_and_positions, gear_candidate_lookup):
+    gear_ratios = []
+    for gear_candidate in gear_candidate_lookup:
+        count = 0
+        numbers = []
+        for number, positions in numbers_and_positions:
+            if is_adjacent(positions, gear_candidate):
+                count += 1
+                numbers.append(int(number))
+        if count == 2:
+            gear_ratios.append(numbers[0] * numbers[1])
+
+    return gear_ratios
+
+
 def part_1(input_data):
     grid = parse_input(input_data)
     symbol_lookup = create_symbol_lookup(grid)
@@ -70,20 +103,24 @@ def part_1(input_data):
 
 
 def part_2(input_data):
-    pass
+    grid = parse_input(input_data)
+    gear_candidate_lookup = create_gear_candidate_lookup(grid)
+    numbers_and_positions = create_numbers_and_positions(grid)
+    gears = gear_ratios(numbers_and_positions, gear_candidate_lookup)
+    return sum(gears)
 
 
 def main():
     input_data = read_file("inputs/day3.txt")
     print(f"part 1: {part_1(input_data)}")
-    # print(f"part 2: {part_2("inputs/day3.txt")}")
+    print(f"part 2: {part_2(input_data)}")
 
 
 if __name__ == "__main__":
     main()
 
 
-def test__part1():
+def test__part1_sample():
     input_data = """
     467..114..
     ...*......
@@ -97,3 +134,29 @@ def test__part1():
     .664.598..
     """
     assert part_1(input_data) == 4361
+
+
+def test__part1():
+    input_data = read_file("inputs/day3.txt")
+    assert part_1(input_data) == 529618
+
+
+def test__part2_test():
+    input_data = """
+    467..114..
+    ...*......
+    ..35..633.
+    ......#...
+    617*......
+    .....+.58.
+    ..592.....
+    ......755.
+    ...$.*....
+    .664.598..
+    """
+    assert part_2(input_data) == 467835
+
+
+def test__part2():
+    input_data = read_file("inputs/day3.txt")
+    assert part_2(input_data) == 77509019
