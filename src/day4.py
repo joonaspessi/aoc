@@ -1,4 +1,5 @@
-from typing import Tuple
+from collections import defaultdict
+from typing import DefaultDict, Tuple
 
 
 def read_input(name: str) -> str:
@@ -36,14 +37,15 @@ def part_1(input_data: str) -> int:
 
 def part_2(input_data: str) -> int:
     cards = parse(input_data)
-    count = 0
-    for _, winning_numbers, player_numbers in cards:
+    card_wins: DefaultDict[int, int] = defaultdict(int)
+    for card_number, winning_numbers, player_numbers in cards:
         round_score = sum(1 for num in player_numbers if num in winning_numbers)
-        if round_score < 2:
-            count += round_score
-        else:
-            count += 2 ** (round_score - 1)
-    return count
+        multiplier = card_wins[card_number]
+        card_wins[card_number] += 1
+        for i in range(card_number + 1, card_number + round_score + 1):
+            card_wins[i] += 1 + multiplier
+
+    return sum(card_wins.values())
 
 
 if __name__ == "__main__":
@@ -65,6 +67,11 @@ def test__part1_sample():
     assert part_1(sample) == 13
 
 
+def test__part1():
+    input_data = read_input("inputs/day4.txt")
+    assert part_1(input_data) == 21959
+
+
 def test__part2_sample():
     sample = """
     Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
@@ -76,3 +83,8 @@ def test__part2_sample():
     """
 
     assert part_2(sample) == 30
+
+
+def test__part2():
+    input_data = read_input("inputs/day4.txt")
+    assert part_2(input_data) == 5132675
