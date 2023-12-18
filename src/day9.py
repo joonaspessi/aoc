@@ -38,16 +38,16 @@ def predict(measurement: list[int], part2: bool = False):
 def part_1(input_data: str) -> int:
     parsed = parse(input_data)
     sum = 0
-    for l in parsed:
-        sum += predict(l)
+    for line in parsed:
+        sum += predict(line)
     return sum
 
 
 def part_2(input_data: str) -> int:
     parsed = parse(input_data)
     sum = 0
-    for l in parsed:
-        sum += predict(l, True)
+    for line in parsed:
+        sum += predict(line, True)
     return sum
 
 
