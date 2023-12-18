@@ -1,3 +1,6 @@
+from math import lcm
+
+
 class TreeNode:
     def __init__(self, name, right=None, left=None):
         self.name = name
@@ -30,34 +33,45 @@ def parse(input_data: str, part_2=False):
         nodes[name].left = nodes[children[0]]
         nodes[name].right = nodes[children[1]]
 
-    return commands, nodes["AAA"]
+    if part_2:
+        start_nodes = [node for node in nodes.values() if node.name[2] == "A"]
+    else:
+        start_nodes = [nodes["AAA"]]
+    return commands, start_nodes
 
 
-def dfs_r(root, commands):
-    stack = [root]
+def dfs_r2(roots, commands):
+    stack = [roots]
     ans = 0
 
     while stack:
-        node = stack.pop()
-        if node.name == "ZZZ":
+        print(ans)
+        nodes = stack.pop()
+        if all([node.name[2] == "Z" for node in nodes]):
             return ans
         next_c = commands[ans % len(commands)]
         ans += 1
-        if next_c == "L":
-            stack.append(node.left)
-        else:
-            stack.append(node.right)
+        next_nodes = []
+        for node in nodes:
+            if next_c == "L":
+                next_nodes.append(node.left)
+            else:
+                next_nodes.append(node.right)
+        stack.append(next_nodes)
 
     assert False, "Should not reach here"
 
 
 def part_1(input_data: str) -> int:
     command, root = parse(input_data)
-    return dfs_r(root, command)
+    return dfs_r2(root, command)
 
 
 def part_2(input_data: str) -> int:
-    return 0
+    command, roots = parse(input_data, part_2=True)
+
+    values = [dfs_r2([root], command) for root in roots]
+    return lcm(*values)
 
 
 if __name__ == "__main__":
@@ -95,3 +109,19 @@ def test__part1_sample2():
 def test__part1():
     input_data = read_input("inputs/day8.txt")
     assert part_1(input_data) == 21409
+
+
+def test__part2_sample1():
+    input_data = """
+    LR
+
+    11A = (11B, XXX)
+    11B = (XXX, 11Z)
+    11Z = (11B, XXX)
+    22A = (22B, XXX)
+    22B = (22C, 22C)
+    22C = (22Z, 22Z)
+    22Z = (22B, 22B)
+    XXX = (XXX, XXX)
+    """
+    assert part_2(input_data) == 6
