@@ -133,6 +133,7 @@ def solve2(y, x, grid):
         for x, char in enumerate(line):
             if not field_marked[y][x]:
                 n = 0
+                prev = None
                 for y1 in range(y + 1, len(grid)):
                     if field_marked[y1][x]:
                         if grid[y1][x] == "-":
@@ -204,15 +205,15 @@ def test__part1():
 
 def test__part2_sample_1():
     input_data = """
-    ...........
-    .S-------7.
-    .|F-----7|.
-    .||.....||.
-    .||.....||.
-    .|L-7.F-J|.
-    .|..|.|..|.
-    .L--J.L--J.
-    ...........
+    ..........
+    .S------7.
+    .|F----7|.
+    .||OOOO||.
+    .||OOOO||.
+    .|L-7F-J|.
+    .|II||II|.
+    .L--JL--J.
+    ..........
     """
     assert part_2(input_data) == 4
 
