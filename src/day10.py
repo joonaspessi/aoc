@@ -1,44 +1,3 @@
-import sys
-from math import ceil
-
-sys.setrecursionlimit(50000)
-# | is a vertical pipe connecting north and south.
-# - is a horizontal pipe connecting east and west.
-# L is a 90-degree bend connecting north and east.
-# J is a 90-degree bend connecting north and west.
-# 7 is a 90-degree bend connecting south and west.
-# F is a 90-degree bend connecting south and east.
-# . is ground; there is no pipe in this tile.
-# S is the starting position of the animal; there is a pipe on this tile, but your sketch doesn't show what shape the pipe has.
-
-connector_map = {
-    "|": {
-        (-1, 0): ("7", "F", "|"),
-        (1, 0): ("L", "J", "|"),
-    },
-    "-": {
-        (0, -1): ("F", "L", "-"),
-        (0, 1): ("7", "J", "-"),
-    },
-    "L": {
-        (0, 1): ("-", "J", "7"),
-        (-1, 0): ("|", "7", "F"),
-    },
-    "J": {
-        (0, -1): ("-", "F", "L"),
-        (-1, 0): ("|", "7", "F"),
-    },
-    "7": {
-        (0, -1): ("-", "F", "L"),
-        (1, 0): ("|", "L", "J"),
-    },
-    "F": {
-        (0, 1): ("-", "J", "7"),
-        (1, 0): ("|", "L", "J"),
-    },
-}
-
-
 def read_input(name: str) -> str:
     with open(name) as f:
         data = f.read()
@@ -57,69 +16,152 @@ def parse(input_data: str):
     return start, grid
 
 
-def can_move(f, t, delta: tuple[int, int]):
-    if f == "S" and t != ".":
-        return True
-    if f == "S":
-        return False
-    if delta in connector_map[f] and t in connector_map[f][delta]:
-        return True
-    return False
+def solve1(y, x, grid):
+    start_y = y
+    start_x = x
+
+    steps = 0
+
+    if x < len(grid[0]) - 1 and grid[y][x + 1] in {"-", "J", "7"}:
+        dir = 1
+    elif y < len(grid) - 1 and grid[y + 1][x] in {"|", "J", "L"}:
+        dir = 2
+    elif x > 0 and grid[y][x - 1] in {"-", "L", "F"}:
+        dir = 3
+    else:
+        dir = 4
+
+    while True:
+        match dir:
+            case 1:
+                x += 1
+            case 2:
+                y += 1
+            case 3:
+                x -= 1
+            case 4:
+                y -= 1
+        match grid[y][x]:
+            case "L":
+                dir = 1 if dir == 2 else 4
+            case "J":
+                dir = 4 if dir == 1 else 3
+            case "F":
+                dir = 1 if dir == 4 else 2
+            case "7":
+                dir = 3 if dir == 4 else 2
+        steps += 1
+
+        if x == start_x and y == start_y:
+            return steps // 2 + (1 if steps % 2 else 0)
 
 
-def is_start(f):
-    return f == "S"
+def solve2(y, x, grid):
+    start_y = y
+    start_x = x
+    field_marked = [[False for _ in range(len(grid[0]))] for _ in range(len(grid))]
 
+    start_pipe = None
+    # L
+    if (
+        y > 0
+        and grid[y - 1][x] in {"|", "F", "7"}
+        and x < len(grid[0]) - 1
+        and grid[y][x + 1] in {"-", "J", "7"}
+    ):
+        start_pipe = "L"
+        dir = 1
+    # J
+    elif (
+        y > 0
+        and grid[y - 1][x] in {"|", "F", "7"}
+        and x > 0
+        and grid[y][x - 1] in {"-", "L", "F"}
+    ):
+        start_pipe = "J"
+        dir = 3
+    # F
+    elif (
+        y < len(grid) - 1
+        and grid[y + 1][x] in {"|", "J", "L"}
+        and x < len(grid[0]) - 1
+        and grid[y][x + 1] in {"-", "7", "J"}
+    ):
+        start_pipe = "F"
+        dir = 1
+    # 7
+    elif (
+        y < len(grid) - 1
+        and grid[y + 1][x] in {"|", "J", "L"}
+        and x > 0
+        and grid[y][x - 1] in {"-", "L", "F"}
+    ):
+        start_pipe = "7"
+        dir = 4
+    else:
+        assert False
 
-def solve(start, grid):
-    def dfs(start, grid, visited, ans):
-        visited[start] = True
-        max_route = ans
-        for dy in [-1, 0, 1]:
-            for dx in [-1, 0, 1]:
-                if abs(dy) + abs(dx) != 1:
-                    continue
+    grid[start_y][start_x] = start_pipe
 
-                new_y = start[0] + dy
-                new_x = start[1] + dx
+    x = start_x
+    y = start_y
+    while True:
+        match dir:
+            case 1:
+                x += 1
+            case 2:
+                y += 1
+            case 3:
+                x -= 1
+            case 4:
+                y -= 1
+        match grid[y][x]:
+            case "L":
+                dir = 1 if dir == 2 else 4
+            case "J":
+                dir = 4 if dir == 1 else 3
+            case "F":
+                dir = 1 if dir == 4 else 2
+            case "7":
+                dir = 3 if dir == 4 else 2
+        field_marked[y][x] = True
+        if x == start_x and y == start_y:
+            break
 
-                if (
-                    new_x < 0
-                    or new_y < 0
-                    or new_x >= len(grid[0])
-                    or new_y >= len(grid)
-                ):
-                    continue
-
-                if is_start(grid[new_y][new_x]) and ans > 1:
-                    return ans + 1
-
-                if (new_y, new_x) in visited:
-                    continue
-
-                if can_move(grid[start[0]][start[1]], grid[new_y][new_x], (dy, dx)):
-                    candidate = dfs((new_y, new_x), grid, visited.copy(), ans + 1)
-                    max_route = max(candidate, max_route)
-        return max_route
-
-    max_route = dfs(start, grid, {}, 0)
-    return ceil(max_route / 2)
+    total = 0
+    for y, line in enumerate(grid):
+        for x, char in enumerate(line):
+            if not field_marked[y][x]:
+                n = 0
+                for y1 in range(y + 1, len(grid)):
+                    if field_marked[y1][x]:
+                        if grid[y1][x] == "-":
+                            n += 1
+                        elif grid[y1][x] == "7" or grid[y1][x] == "F":
+                            prev = grid[y1][x]
+                        elif (grid[y1][x] == "J" and prev == "F") or (
+                            grid[y1][x] == "L" and prev == "7"
+                        ):
+                            n += 1
+                if n % 2 == 1:
+                    total += 1
+    return total
 
 
 def part_1(input_data: str) -> int:
-    start, grid = parse(input_data)
-    return solve(start, grid)
+    (y, x), grid = parse(input_data)
+    return solve1(y, x, grid)
 
 
 def part_2(input_data: str) -> int:
-    parsed = parse(input_data)
-    ret = 0
-    return ret
+    (y, x), grid = parse(input_data)
+    return solve2(y, x, grid)
 
 
 if __name__ == "__main__":
     input_data = read_input("inputs/day10.txt")
     print(part_1(input_data))
+    print(part_2(input_data))
 
 
 def test__part1_sample_1():
@@ -153,3 +195,44 @@ def test__part1_sample_3():
     LJ...
     """
     assert part_1(input_data) == 8
+
+
+def test__part1():
+    input_data = read_input("inputs/day10.txt")
+    assert part_1(input_data) == 6968
+
+
+def test__part2_sample_1():
+    input_data = """
+    ...........
+    .S-------7.
+    .|F-----7|.
+    .||.....||.
+    .||.....||.
+    .|L-7.F-J|.
+    .|..|.|..|.
+    .L--J.L--J.
+    ...........
+    """
+    assert part_2(input_data) == 4
+
+
+def test__part2_sample_2():
+    input_data = """
+    .F----7F7F7F7F-7....
+    .|F--7||||||||FJ....
+    .||.FJ||||||||L7....
+    FJL7L7LJLJ||LJ.L-7..
+    L--J.L7...LJS7F-7L7.
+    ....F-J..F7FJ|L7L7L7
+    ....L7.F7||L7|.L7L7|
+    .....|FJLJ|FJ|F7|.LJ
+    ....FJL-7.||.||||...
+    ....L---J.LJ.LJLJ...
+    """
+    assert part_2(input_data) == 8
+
+
+def test__part2():
+    input_data = read_input("inputs/day10.txt")
+    assert part_2(input_data) == 413
