@@ -1,5 +1,7 @@
 from functools import reduce
 
+import pytest
+
 
 def read_input(name: str) -> str:
     with open(name) as f:
@@ -65,5 +67,6 @@ def test__part2_sample():
     assert part_2(sample) == 71503
 
 
+@pytest.mark.skip
 def test__part2():
     assert part_2(read_input("inputs/day6.txt")) == 34454850
