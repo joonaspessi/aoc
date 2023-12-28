@@ -1,0 +1,46 @@
+def read_input(name: str) -> str:
+    with open(name) as f:
+        data = f.read()
+    return data.strip()
+
+
+def parse():
+    pass
+
+
+def part_1(input_data: str) -> int:
+    return 0
+
+
+def part_2(input_data: str) -> int:
+    return 0
+
+
+if __name__ == "__main__":
+    input_data = read_input("inputs/dayXX.txt")
+    print(part_1(input_data))
+    print(part_2(input_data))
+
+
+def test__part1_sample():
+    input_data = """
+    xxx
+    """
+    assert part_1(input_data) == 0
+
+
+def test__part1():
+    input_data = read_input("inputs/day1.txt")
+    assert part_1(input_data) == 0
+
+
+def test__part2_sample():
+    input_data = """
+    xxx
+    """
+    assert part_1(input_data) == 0
+
+
+def test__part2():
+    input_data = read_input("inputs/day1.txt")
+    assert part_2(input_data) == 0
