@@ -8,10 +8,26 @@ def parse(input_data):
     return [[c for c in row.strip()] for row in input_data.strip().split("\n")]
 
 
-def move(grid, r, c):
-    if r == 0 or grid[r - 1][c] in ["#", "O"]:
-        return (r, c)
-    return move(grid, r - 1, c)
+def move(grid):
+    c_len = len(grid[0])
+    r_len = len(grid)
+    for c in range(c_len):
+        for _ in range(r_len):
+            for r in range(r_len):
+                if grid[r][c] == "O" and r > 0 and grid[r - 1][c] == ".":
+                    grid[r][c] = "."
+                    grid[r - 1][c] = "O"
+    return grid
+
+
+def rotate(grid):
+    c_len = len(grid[0])
+    r_len = len(grid)
+    new_grid = [["X" for _ in range(r_len)] for _ in range(c_len)]
+    for r in range(r_len):
+        for c in range(c_len):
+            new_grid[c][r_len - 1 - r] = grid[r][c]
+    return new_grid
 
 
 def clc_ld(grid):
@@ -27,18 +43,29 @@ def clc_ld(grid):
 
 def part_1(input_data: str) -> int:
     grid = parse(input_data)
-    for c in range(len(grid[0])):
-        for r in range(len(grid)):
-            if grid[r][c] == "O":
-                nr, nc = move(grid, r, c)
-                grid[r][c] = "."
-                grid[nr][nc] = "O"
-
+    grid = move(grid)
     return clc_ld(grid)
 
 
 def part_2(input_data: str) -> int:
-    return 0
+    grid = parse(input_data)
+    target = 10**9
+    grid_states = {}
+    i = 0
+    while i < target:
+        i += 1
+        for j in range(4):
+            grid = move(grid)
+            grid = rotate(grid)
+
+        grid_hash = tuple(tuple(r) for r in grid)
+        if grid_hash in grid_states:
+            cycle_len = i - grid_states[grid_hash]
+            m = (target - i) // cycle_len
+            i += m * cycle_len
+        grid_states[grid_hash] = i
+
+    return clc_ld(grid)
 
 
 if __name__ == "__main__":
@@ -70,11 +97,20 @@ def test__part1():
 
 def test__part2_sample():
     input_data = """
-    xxx
+    O....#....
+    O.OO#....#
+    .....##...
+    OO.#O....O
+    .O.....O#.
+    O.#..O.#.#
+    ..O..#O..O
+    .......O..
+    #....###..
+    #OO..#....
     """
-    assert part_1(input_data) == 0
+    assert part_2(input_data) == 64
 
 
 def test__part2():
-    input_data = read_input("inputs/day4.txt")
-    assert part_2(input_data) == 0
+    input_data = read_input("inputs/day14.txt")
+    assert part_2(input_data) == 95254
