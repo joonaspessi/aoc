@@ -65,7 +65,7 @@ def test__part1_sample():
 
 def test__part1():
     input_data = read_input("inputs/day14.txt")
-    assert part_1(input_data) == 136
+    assert part_1(input_data) == 110090
 
 
 def test__part2_sample():
