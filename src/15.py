@@ -27,7 +27,33 @@ def part_1(input_data: str) -> int:
 
 
 def part_2(input_data: str) -> int:
-    return 0
+    sequences = parse(input_data)
+    boxes = {}
+    for s in sequences:
+        if s[-1] == "-":
+            k = s[:-1]
+            h = calc_hash(k)
+            if h in boxes:
+                boxes[h] = [b for b in boxes[h] if b[0] != k]
+        else:
+            i = s.index("=")
+            k = s[:i]
+            h = calc_hash(k)
+            v = int(s[(i + 1) :])
+            if h not in boxes:
+                boxes[h] = []
+            if any([k == kk for (kk, _) in boxes[h]]):
+                boxes[h] = [(k, v) if kk == k else (kk, vv) for (kk, vv) in boxes[h]]
+            else:
+                boxes[h].append((k, v))
+
+    answer = 0
+    for box, slots in boxes.items():
+        for i, (_, fl) in enumerate(slots):
+            answer += (box + 1) * (i + 1) * (fl)
+            pass
+
+    return answer
 
 
 if __name__ == "__main__":
@@ -50,11 +76,11 @@ def test__part1():
 
 def test__part2_sample():
     input_data = """
-    xxx
+    rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7
     """
-    assert part_2(input_data) == 0
+    assert part_2(input_data) == 145
 
 
 def test__part2():
     input_data = read_input("inputs/day15.txt")
-    assert part_2(input_data) == 0
+    assert part_2(input_data) == 262044
