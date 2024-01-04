@@ -4,15 +4,17 @@ def read_input(name: str) -> str:
     return data.strip()
 
 
-def parse():
-    pass
+def parse(input_data):
+    return input_data
 
 
 def part_1(input_data: str) -> int:
+    data = parse(input_data)  # noqa
     return 0
 
 
 def part_2(input_data: str) -> int:
+    data = parse(input_data)  # noqa
     return 0
 
 
