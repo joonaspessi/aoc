@@ -31,7 +31,13 @@ def solve(grid, part2=False):
             new_dir = i
             new_dir_count = 1 if new_dir != direction else dir_count + 1
             not_reverse = (new_dir + 2) % 4 != direction
-            is_valid = new_dir_count <= 3
+
+            if not part2:
+                is_valid = new_dir_count <= 3
+            else:
+                is_valid = new_dir_count <= 10 and (
+                    dir_count >= 4 or new_dir == direction or dir_count == -1
+                )
 
             if (
                 0 <= new_row < len_r
@@ -48,18 +54,19 @@ def solve(grid, part2=False):
 
     ret_val = float("inf")
     for (r, c, d, dc), value in memo.items():
-        if r == len_r - 1 and c == len_c - 1:
+        if r == len_r - 1 and c == len_c - 1 and (dc >= 4 if part2 else True):
             ret_val = min(ret_val, value)
     return ret_val
 
 
 def part_1(input_data: str) -> int:
     grid = parse(input_data)
-    return solve(grid)
+    return solve(grid, part2=False)
 
 
 def part_2(input_data: str) -> int:
-    return 0
+    grid = parse(input_data)
+    return solve(grid, part2=True)
 
 
 if __name__ == "__main__":
@@ -108,7 +115,18 @@ def test__part2_sample():
     2546548887735
     4322674655533
     """
-    assert part_2(input_data) == 0
+    assert part_2(input_data) == 94
+
+
+def test__part2_sample2():
+    input_data = """
+    111111111111
+    999999999991
+    999999999991
+    999999999991
+    999999999991
+    """
+    assert part_2(input_data) == 71
 
 
 def test__part2():
