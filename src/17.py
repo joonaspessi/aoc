@@ -131,4 +131,4 @@ def test__part2_sample2():
 
 def test__part2():
     input_data = read_input("inputs/day17.txt")
-    assert part_2(input_data) == 0
+    assert part_2(input_data) == 1215
