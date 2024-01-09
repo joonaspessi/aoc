@@ -33,7 +33,7 @@ def test__part1_sample():
 
 def test__part1():
     input_data = read_input("inputs/day1.txt")
-    assert part_1(input_data) == 446517
+    assert part_1(input_data) == 0
 
 
 def test__part2_sample():
