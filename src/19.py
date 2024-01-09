@@ -1,18 +1,4 @@
-from dataclasses import dataclass
-
-
-@dataclass
-class Rule:
-    key: str
-    operator: str
-    operand: int
-    next: str
-
-
-@dataclass
-class Workflow:
-    name: str
-    rules: list[Rule]
+from collections import deque
 
 
 def read_input(name: str) -> str:
@@ -77,9 +63,123 @@ def part_1(input_data: str) -> int:
     return ret_val
 
 
+def new_range(op, comp, low, high):
+    match op:
+        case ">":
+            low = max(comp + 1, low)
+        case ">=":
+            low = max(comp, low)
+        case "<":
+            high = min(comp - 1, high)
+        case "<=":
+            high = min(comp, high)
+        case _:
+            assert False
+
+    return low, high
+
+
+def new_ranges(
+    rating_key, op, comp, x_low, x_high, m_low, m_high, a_low, a_high, s_low, s_high
+) -> tuple[int, int, int, int, int, int, int, int]:
+    match rating_key:
+        case "x":
+            x_low, x_high = new_range(op, comp, x_low, x_high)
+        case "m":
+            m_low, m_high = new_range(op, comp, m_low, m_high)
+        case "a":
+            a_low, a_high = new_range(op, comp, a_low, a_high)
+        case "s":
+            s_low, s_high = new_range(op, comp, s_low, s_high)
+        case _:
+            assert False
+    return (x_low, x_high, m_low, m_high, a_low, a_high, s_low, s_high)
+
+
 def part_2(input_data: str) -> int:
-    data = parse(input_data)  # noqa
-    return 0
+    workflows, ratings = parse(input_data)
+    ret_val = 0
+    stack = deque([("in", 1, 4000, 1, 4000, 1, 4000, 1, 4000)])
+    while stack:
+        state, x_low, x_high, m_low, m_high, a_low, a_high, s_low, s_high = stack.pop()
+        if x_low > x_high or m_low > m_high or a_low > a_high or s_low > s_high:
+            continue
+        if state == "A":
+            score = (
+                (x_high - x_low + 1)
+                * (m_high - m_low + 1)
+                * (a_high - a_low + 1)
+                * (s_high - s_low + 1)
+            )
+            ret_val += score
+
+        elif state == "R":
+            continue
+        else:
+            rules = workflows[state]
+            for rule in rules:
+                if ":" in rule:
+                    condition, result = rule.split(":")
+                    rule = result
+                    rating_key = condition[0]
+                    op = condition[1]
+                    comp = int(condition[2:])
+                    stack.append(
+                        (
+                            rule,
+                            *new_ranges(
+                                rating_key,
+                                op,
+                                comp,
+                                x_low,
+                                x_high,
+                                m_low,
+                                m_high,
+                                a_low,
+                                a_high,
+                                s_low,
+                                s_high,
+                            ),
+                        )
+                    )
+                    (
+                        x_low,
+                        x_high,
+                        m_low,
+                        m_high,
+                        a_low,
+                        a_high,
+                        s_low,
+                        s_high,
+                    ) = new_ranges(
+                        rating_key,
+                        "<=" if op == ">" else ">=",
+                        comp,
+                        x_low,
+                        x_high,
+                        m_low,
+                        m_high,
+                        a_low,
+                        a_high,
+                        s_low,
+                        s_high,
+                    )
+                else:
+                    stack.append(
+                        (
+                            rule,
+                            x_low,
+                            x_high,
+                            m_low,
+                            m_high,
+                            a_low,
+                            a_high,
+                            s_low,
+                            s_high,
+                        )
+                    )
+
+    return ret_val
 
 
 if __name__ == "__main__":
@@ -113,7 +213,7 @@ def test__part1_sample():
 
 def test__part1():
     input_data = read_input("inputs/day19.txt")
-    assert part_1(input_data) == 0
+    assert part_1(input_data) == 446517
 
 
 def test__part2_sample():
@@ -136,9 +236,9 @@ def test__part2_sample():
     {x=2461,m=1339,a=466,s=291}
     {x=2127,m=1623,a=2188,s=1013}
     """
-    assert part_2(input_data) == 0
+    assert part_2(input_data) == 167409079868000
 
 
 def test__part2():
     input_data = read_input("inputs/day19.txt")
-    assert part_2(input_data) == 0
+    assert part_2(input_data) == 130090458884662
