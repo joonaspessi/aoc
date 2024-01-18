@@ -1,4 +1,5 @@
 import dataclasses
+import math
 from collections import deque
 
 
@@ -53,7 +54,6 @@ class Broadcaster:
 def parse(input_data):
     data = [d.strip().split(" -> ") for d in input_data.strip().split("\n")]
     tree = {}
-    conjunction_parents = []
     for d in data:
         module, connections = d
         if module[0] == "%":
@@ -77,8 +77,6 @@ def parse(input_data):
 
 def part_1(input_data: str) -> int:
     modules = parse(input_data)
-
-    current = "broadcast"
     low_count = 0
     high_count = 0
 
@@ -102,27 +100,53 @@ def part_1(input_data: str) -> int:
     return low_count * high_count
 
 
+def lcm(xs):
+    ans = 1
+    for x in xs:
+        ans = (ans * x) // math.gcd(x, ans)
+    return ans
+
+
 def part_2(input_data: str) -> int:
-    data = parse(input_data)  # noqa
-    return 0
+    modules = parse(input_data)
+    c = 0
+
+    # manually obtained by inspecting the source data
+    watch = modules["lg"].inputs
+    lcm_val = {}
+
+    while True:
+        c += 1
+        stack = deque()
+        stack.append(modules["broadcaster"])
+        while stack:
+            m = stack.popleft()
+
+            if m in watch and m.state:
+                if m.name not in lcm_val:
+                    print(f"{len(lcm_val)}")
+                    lcm_val[m.name] = c
+                if len(lcm_val) == len(watch):
+                    return lcm(lcm_val.values())
+
+            for om in m.outputs:
+                if om not in modules:
+                    continue
+                om = modules[om]
+
+                if not m.state and om.name == "rx":
+                    return c
+
+                out = om.compute(m.state)
+
+                if out is not None:
+                    stack.append(om)
 
 
 if __name__ == "__main__":
     input_data = read_input("inputs/day20.txt")
     print(part_1(input_data))
     print(part_2(input_data))
-
-
-def test_conjunction():
-    c = Conjunction(name="foo")
-
-    out = c.compute(True)
-    assert out == False
-    assert c.state == False
-
-    out = c.compute(False)
-    assert out == True
-    assert c.state == True
 
 
 def test__part1_sample():
@@ -150,16 +174,9 @@ def test__part1_sample2():
 
 def test__part1():
     input_data = read_input("inputs/day20.txt")
-    assert part_1(input_data) == 0
-
-
-def test__part2_sample():
-    input_data = """
-    xxx
-    """
-    assert part_2(input_data) == 0
+    assert part_1(input_data) == 929810733
 
 
 def test__part2():
     input_data = read_input("inputs/day20.txt")
-    assert part_2(input_data) == 0
+    assert part_2(input_data) == 231657829136023
