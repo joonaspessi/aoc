@@ -5,13 +5,16 @@ slopes = dict(zip("^>v<", directions))
 
 
 class Graph:
-    def __init__(self, graph, start, end):
+    def __init__(self, graph, start, end, part_2=False):
         self.nodes = {}
         for k, v in graph.items():
             if v == ".":
                 self.nodes[k] = Node(k)
             if v in slopes:
-                self.nodes[k] = Node(k, direction=slopes[v])
+                if part_2:
+                    self.nodes[k] = Node(k, direction=None)
+                else:
+                    self.nodes[k] = Node(k, direction=slopes[v])
         self.start = self.nodes[start]
         self.end = self.nodes[end]
 
@@ -21,6 +24,7 @@ class Graph:
                 x = k[1] + d[1]
                 if (y, x) in self.nodes and self.nodes[(y, x)].direction in (None, d):
                     v.edges[self.nodes[(y, x)]] = 1
+        self.compress()
 
     def solve(self):
         ans = 0
@@ -30,10 +34,27 @@ class Graph:
             n, dist, seen = s.popleft()
             if n == self.end:
                 ans = max(ans, dist)
-            for e in n.edges:
+            for e, length in n.edges.items():
                 if e not in seen:
-                    s.append((e, dist + 1, seen + [e]))
+                    s.append((e, dist + length, seen + [e]))
         return ans
+
+    def compress(self):
+        remove = []
+        for pos, node in self.nodes.items():
+            if node.direction is not None:
+                continue
+            if len(node.edges) == 2 and not any(edge.direction for edge in node.edges):
+                n1, n2 = node.edges.keys()
+                del n1.edges[node]
+                del n2.edges[node]
+                n1.edges[n2] = sum(node.edges.values())
+                n2.edges[n1] = sum(node.edges.values())
+                remove.append(pos)
+
+        while remove:
+            k = remove.pop()
+            del self.nodes[k]
 
 
 class Node:
@@ -73,8 +94,9 @@ def part_1(input_data: str) -> int:
 
 
 def part_2(input_data: str) -> int:
-    data = parse(input_data)  # noqa
-    return 0
+    grid, start, end = parse(input_data)
+    graph = Graph(graph=grid, start=start, end=end, part_2=True)
+    return graph.solve()
 
 
 if __name__ == "__main__":
@@ -82,9 +104,7 @@ if __name__ == "__main__":
     print(part_1(input_data))
     print(part_2(input_data))
 
-
-def test__part1_sample():
-    input_data = """
+input_data = """
     #.#####################
     #.......#########...###
     #######.#########.#.###
@@ -109,6 +129,9 @@ def test__part1_sample():
     #.....###...###...#...#
     #####################.#
     """
+
+
+def test__part1_sample():
     assert part_1(input_data) == 94
 
 
@@ -118,12 +141,9 @@ def test__part1():
 
 
 def test__part2_sample():
-    input_data = """
-    xxx
-    """
-    assert part_2(input_data) == 0
+    assert part_2(input_data) == 154
 
 
 def test__part2():
     input_data = read_input("inputs/day23.txt")
-    assert part_2(input_data) == 0
+    assert part_2(input_data) == 6526
