@@ -26,7 +26,7 @@ test:
 
 .PHONY: download-input
 download-input:
-	./download-input.sh $(day)
+	./download-input.sh $(year) $(day)
 
 .PHONY: lint
 lint:

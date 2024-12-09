@@ -35,7 +35,7 @@ def part_2(lines):
     return total
 
 
-lines = read_file("inputs/day1.txt")
+lines = read_file("inputs/2023/day1.txt")
 
 print(f"part 1: {part_1(lines)}")
 print(f"part 2: {part_2(lines)}")

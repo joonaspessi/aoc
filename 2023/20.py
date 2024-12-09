@@ -144,7 +144,7 @@ def part_2(input_data: str) -> int:
 
 
 if __name__ == "__main__":
-    input_data = read_input("inputs/day20.txt")
+    input_data = read_input("inputs/2023/day20.txt")
     print(part_1(input_data))
     print(part_2(input_data))
 
@@ -173,10 +173,10 @@ def test__part1_sample2():
 
 
 def test__part1():
-    input_data = read_input("inputs/day20.txt")
+    input_data = read_input("inputs/2023/day20.txt")
     assert part_1(input_data) == 929810733
 
 
 def test__part2():
-    input_data = read_input("inputs/day20.txt")
+    input_data = read_input("inputs/2023/day20.txt")
     assert part_2(input_data) == 231657829136023

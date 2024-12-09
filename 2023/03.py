@@ -32,7 +32,7 @@ def create_gear_candidate_lookup(grid: list[list[str]]) -> list[Tuple[int, int]]
 
 
 def create_numbers_and_positions(
-    grid: list[list[str]]
+    grid: list[list[str]],
 ) -> list[Tuple[str, list[Tuple[int, int]]]]:
     numbers_and_positions = []
     for y, line in enumerate(grid):
@@ -121,7 +121,7 @@ def part_2(input_data: str) -> int:
 
 
 def main():
-    input_data = read_file("inputs/day3.txt")
+    input_data = read_file("inputs/2023/day3.txt")
     print(f"part 1: {part_1(input_data)}")
     print(f"part 2: {part_2(input_data)}")
 
@@ -147,7 +147,7 @@ def test__part1_sample():
 
 
 def test__part1():
-    input_data = read_file("inputs/day3.txt")
+    input_data = read_file("inputs/2023/day3.txt")
     assert part_1(input_data) == 529618
 
 
@@ -168,5 +168,5 @@ def test__part2_test():
 
 
 def test__part2():
-    input_data = read_file("inputs/day3.txt")
+    input_data = read_file("inputs/2023/day3.txt")
     assert part_2(input_data) == 77509019

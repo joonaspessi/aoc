@@ -43,7 +43,7 @@ def part_2(lines):
 
 
 def main():
-    lines = read_file("inputs/day2.txt")
+    lines = read_file("inputs/2023/day2.txt")
     draws = {
         "red": 12,
         "green": 13,

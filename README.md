@@ -1,14 +1,10 @@
-# Advent of code 2023
+# Advent of code
 
-[![Tests](https://github.com/joonaspessi/aoc2023/actions/workflows/test.yml/badge.svg)](https://github.com/joonaspessi/aoc2023/actions/workflows/test.yml)
+[![Tests](https://github.com/joonaspessi/aoc/actions/workflows/test.yml/badge.svg)](https://github.com/joonaspessi/aoc2023/actions/workflows/test.yml)
 
-My solutions for [Advent of Code 2023](https://adventofcode.com/2023) in Python.
+My solutions for [Advent of Code](https://adventofcode.com/) in Python.
 
 ## Usage
-
-### Prerequisites
-
-python3.11
 
 ### Create venv and install dependencies
 
@@ -34,7 +30,7 @@ make compile-requirements
 Get your session cookie from [Advent of Code](https://adventofcode.com/), insert the cookie to `.env` file and run:
 
 ```bash
-make download-input day=x
+make download-input year=2024 day=x
 ```
 
 where x is the day number.
