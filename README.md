@@ -1,6 +1,6 @@
 # Advent of code
 
-[![Tests](https://github.com/joonaspessi/aoc/actions/workflows/test.yml/badge.svg)](https://github.com/joonaspessi/aoc2023/actions/workflows/test.yml)
+[![Tests](https://github.com/joonaspessi/aoc/actions/workflows/test.yml/badge.svg)](https://github.com/joonaspessi/aoc/actions/workflows/test.yml)
 
 My solutions for [Advent of Code](https://adventofcode.com/) in Python.
 
@@ -29,8 +29,8 @@ make compile-requirements
 
 Get your session cookie from [Advent of Code](https://adventofcode.com/), insert the cookie to `.env` file and run:
 
-```bash
-make download-input year=2024 day=x
-```
+And fetch the input, in eg.
 
-where x is the day number.
+```bash
+make download-input year=x day=y
+```
