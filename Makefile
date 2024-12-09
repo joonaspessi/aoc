@@ -22,7 +22,7 @@ compile-requirements:
 
 .PHONY: test
 test:
-	. $(VENV_PATH)/bin/activate; python -m pytest
+	. $(VENV_PATH)/bin/activate; python -m pytest 2024 --import-mode=importlib
 
 .PHONY: download-input
 download-input:

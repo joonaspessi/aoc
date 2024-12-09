@@ -27,25 +27,25 @@ if __name__ == "__main__":
     print(part_2(input_data))
 
 
-def test__part1_sample():
-    input_data = """
-    xxx
-    """
-    assert part_1(input_data) == 0
+# def test__part1_sample():
+#     input_data = """
+#     xxx
+#     """
+#     assert part_1(input_data) == 0
 
 
-def test__part1():
-    input_data = read_input(INPUT_FILE)
-    assert part_1(input_data) == 0
+# def test__part1():
+#     input_data = read_input(INPUT_FILE)
+#     assert part_1(input_data) == 0
 
 
-def test__part2_sample():
-    input_data = """
-    xxx
-    """
-    assert part_2(input_data) == 0
+# def test__part2_sample():
+#     input_data = """
+#     xxx
+#     """
+#     assert part_2(input_data) == 0
 
 
-def test__part2():
-    input_data = read_input(INPUT_FILE)
-    assert part_2(input_data) == 0
+# def test__part2():
+#     input_data = read_input(INPUT_FILE)
+#     assert part_2(input_data) == 0
