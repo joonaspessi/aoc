@@ -30,4 +30,4 @@ download-input:
 
 .PHONY: lint
 lint:
-	. $(VENV_PATH)/bin/activate; python -m ruff src
+	. $(VENV_PATH)/bin/activate; python -m ruff check .
