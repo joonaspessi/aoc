@@ -36,15 +36,35 @@ def part_1(input_data: str) -> int:
     data = parse(input_data)  # noqa
     result = 0
     for d in data:
-        if backtrack(0, d["operands"], 0, d["target"]):
+        if backtrack(1, d["operands"], d["operands"][0], d["target"]):
             result += d["target"]
 
     return result
 
 
+def backtrack2(curr_index, operands, result, target):
+    if curr_index == len(operands):
+        return result == target
+
+    if backtrack2(curr_index + 1, operands, result + operands[curr_index], target):
+        return True
+    if backtrack2(curr_index + 1, operands, result * operands[curr_index], target):
+        return True
+    if backtrack2(
+        curr_index + 1, operands, int(str(result) + str(operands[curr_index])), target
+    ):
+        return True
+    return False
+
+
 def part_2(input_data: str) -> int:
     data = parse(input_data)  # noqa
-    return 0
+    result = 0
+    for d in data:
+        if backtrack2(1, d["operands"], d["operands"][0], d["target"]):
+            result += d["target"]
+
+    return result
 
 
 if __name__ == "__main__":
@@ -70,16 +90,24 @@ def test__part1_sample():
 
 def test__part1():
     input_data = read_input(INPUT_FILE)
-    assert part_1(input_data) == 0
+    assert part_1(input_data) == 5512534574980
 
 
-# def test__part2_sample():
-#     input_data = """
-#     xxx
-#     """
-#     assert part_2(input_data) == 0
+def test__part2_sample():
+    input_data = """
+    190: 10 19
+    3267: 81 40 27
+    83: 17 5
+    156: 15 6
+    7290: 6 8 6 15
+    161011: 16 10 13
+    192: 17 8 14
+    21037: 9 7 18 13
+    292: 11 6 16 20
+    """
+    assert part_2(input_data) == 11387
 
 
-# def test__part2():
-#     input_data = read_input(INPUT_FILE)
-#     assert part_2(input_data) == 0
+def test__part2():
+    input_data = read_input(INPUT_FILE)
+    assert part_2(input_data) == 328790210468594
