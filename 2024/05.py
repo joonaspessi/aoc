@@ -61,8 +61,6 @@ def part_1(input_data: str) -> int:
 #     return error   (graph has at least one cycle)
 # else
 #     return L   (a topologically sorted order)
-
-
 def part_2(input_data: str) -> int:
     upstream_rules, downsteam_rules, updates = parse(input_data)
     result = 0
