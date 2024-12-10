@@ -179,4 +179,4 @@ def test__part2_sample():
 
 def test__part2():
     input_data = read_input(INPUT_FILE)
-    assert part_2(input_data) == 0
+    assert part_2(input_data) == 5448
