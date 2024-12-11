@@ -98,8 +98,7 @@ def part_2(input_data: str) -> int:
             result.add((y1, x1))
             result.add((y2, x2))
             points = extrapolate_points_2(grid, y1, x1, y2, x2)
-            for p in points:
-                result.add(p)
+            result.update(points)
 
     # print grid with results
     for y in range(len(grid)):
