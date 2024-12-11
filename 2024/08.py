@@ -87,7 +87,7 @@ def part_1(input_data: str) -> int:
             if is_in_bounds(*p2, grid):
                 result.add(p2)
 
-    return
+    return len(result)
 
 
 def part_2(input_data: str) -> int:
