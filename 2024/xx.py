@@ -1,4 +1,4 @@
-INPUT_FILE = "inputs/2024/dayXX.txt"
+INPUT_FILE = "inputs/2024/dayX.txt"
 
 
 def read_input(name: str) -> str:
