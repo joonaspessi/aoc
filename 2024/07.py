@@ -1,6 +1,3 @@
-from collections import deque
-
-
 INPUT_FILE = "inputs/2024/day7.txt"
 
 
