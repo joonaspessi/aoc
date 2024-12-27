@@ -1,4 +1,7 @@
-INPUT_FILE = "inputs/2024/dayX.txt"
+from collections import defaultdict, deque
+from typing import Tuple
+
+INPUT_FILE = "inputs/2024/day10.txt"
 
 
 def read_input(name: str) -> str:
@@ -8,28 +11,51 @@ def read_input(name: str) -> str:
 
 
 def parse(input_data):
-    rows = []
+    grid = []
     for line in input_data.strip().split("\n"):
         row = list(line.strip())
-        rows.append(row)
+        grid.append([int(r) for r in row])
+    return grid
 
-    return rows
+
+def bfs(grid, y, x):
+    result = 0
+    stack = deque([(y, x)])
+    seen = set()
+
+    while stack:
+        y, x = stack.popleft()
+        if (y, x) in seen:
+            continue
+        seen.add((y, x))
+        if grid[y][x] == 0:
+            result += 1
+        for dy, dx in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
+            yy = y + dy
+            xx = x + dx
+            if (
+                0 <= yy < len(grid)
+                and 0 <= xx < len(grid[0])
+                and grid[yy][xx] == grid[y][x] - 1
+            ):
+                stack.append((yy, xx))
+    return result
 
 
 def part_1(input_data: str) -> int:
-    data = parse(input_data)  # noqa
-    return 0
+    grid = parse(input_data)
+    result = 0
+    for y in range(len(grid)):
+        for x in range(len(grid[0])):
+            if grid[y][x] == 9:
+                result += bfs(grid, y, x)
+
+    return result
 
 
 def part_2(input_data: str) -> int:
     data = parse(input_data)  # noqa
     return 0
-
-
-if __name__ == "__main__":
-    input_data = read_input(INPUT_FILE)
-    print(part_1(input_data))
-    print(part_2(input_data))
 
 
 def test__part1_sample():
@@ -43,12 +69,12 @@ def test__part1_sample():
     01329801
     10456732
     """
-    assert part_1(input_data) == 0
+    assert part_1(input_data) == 36
 
 
-# def test__part1():
-#     input_data = read_input(INPUT_FILE)
-#     assert part_1(input_data) == 0
+def test__part1():
+    input_data = read_input(INPUT_FILE)
+    assert part_1(input_data) == 574
 
 
 # def test__part2_sample():
@@ -61,3 +87,8 @@ def test__part1_sample():
 # def test__part2():
 #     input_data = read_input(INPUT_FILE)
 #     assert part_2(input_data) == 0
+
+if __name__ == "__main__":
+    input_data = read_input(INPUT_FILE)
+    print(part_1(input_data))
+    # print(part_2(input_data))
