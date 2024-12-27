@@ -131,7 +131,7 @@ def test__part2_sample():
     assert part_2(input_data) == 6
 
 
-@pytest.skip("Takes too long")
+@pytest.mark.skip("slow")
 def test__part2():
     input_data = read_input(INPUT_FILE)
     assert part_2(input_data) == 1793
