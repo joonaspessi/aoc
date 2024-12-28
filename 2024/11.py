@@ -8,39 +8,45 @@ def read_input(name: str) -> str:
 
 
 def parse(input_data):
-    data = input_data.strip().split()
+    data = [int(d) for d in input_data.strip().split()]
     return data
 
 
-def blink(stones):
-    result = []
-    for stone in stones:
-        if stone == "0":
-            result.append("1")
-        elif len(stone) % 2 == 0:
-            # split string in half
-            half = len(stone) // 2
-            left = stone[:half]
-            right = stone[half:]
-            result.append(str(int(left)))
-            result.append(str(int(right)))
-        else:
-            # multiply by 2024
-            result.append(str(int(stone) * 2024))
+def blink(stone, n, cache):
+    if (stone, n) in cache:
+        return cache[(stone, n)]
+
+    if n == 0:
+        result = 1
+    elif stone == 0:
+        result = blink(1, n - 1, cache)
+    elif len(str(stone)) % 2 == 0:
+        stone_str = str(stone)
+        half = len(stone_str) // 2
+        left = stone_str[:half]
+        right = stone_str[half:]
+        result = blink(int(left), n - 1, cache) + blink(int(right), n - 1, cache)
+    else:
+        result = blink(stone * 2024, n - 1, cache)
+    cache[(stone, n)] = result
     return result
 
 
 def part_1(input_data: str) -> int:
-    stones = parse(input_data)  # noqa
-    for _ in range(25):
-        stones = blink(stones)
-        pass
-    return len(stones)
+    stones = parse(input_data)
+
+    result = 0
+    for stone in stones:
+        result += blink(stone, 25, {})
+    return result
 
 
 def part_2(input_data: str) -> int:
-    data = parse(input_data)  # noqa
-    return 0
+    stones = parse(input_data)
+    result = 0
+    for stone in stones:
+        result += blink(stone, 75, {})
+    return result
 
 
 def test__part1_sample():
@@ -50,23 +56,25 @@ def test__part1_sample():
     assert part_1(input_data) == 55312
 
 
-# def test__part1():
-#     input_data = read_input(INPUT_FILE)
-#     assert part_1(input_data) == 0
+def test__part1():
+    input_data = read_input(INPUT_FILE)
+    assert part_1(input_data) == 198089
 
 
-# def test__part2_sample():
-#     input_data = """
-#     xxx
-#     """
-#     assert part_2(input_data) == 0
+def test__part2_sample():
+    input_data = """
+    125 17
+    """
+    assert part_2(input_data) == 65601038650482
 
 
-# def test__part2():
-#     input_data = read_input(INPUT_FILE)
-#     assert part_2(input_data) == 0
+def test__part2():
+    input_data = read_input(INPUT_FILE)
+    assert part_2(input_data) == 236302670835517
+
 
 if __name__ == "__main__":
+    test__part2_sample()
     input_data = read_input(INPUT_FILE)
     print(part_1(input_data))
-    # print(part_2(input_data))
+    print(part_2(input_data))
