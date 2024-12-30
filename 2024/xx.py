@@ -21,12 +21,6 @@ def part_2(input_data: str) -> int:
     return 0
 
 
-if __name__ == "__main__":
-    input_data = read_input(INPUT_FILE)
-    print(part_1(input_data))
-    print(part_2(input_data))
-
-
 # def test__part1_sample():
 #     input_data = """
 #     xxx
@@ -49,3 +43,12 @@ if __name__ == "__main__":
 # def test__part2():
 #     input_data = read_input(INPUT_FILE)
 #     assert part_2(input_data) == 0
+
+if __name__ == "__main__":
+    # test__part1_sample()
+    # test__part1()
+    # test__part2_sample()
+    # test__part2()
+    input_data = read_input(INPUT_FILE)
+    print(part_1(input_data))
+    print(part_2(input_data))
