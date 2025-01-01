@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, deque
 
 
 INPUT_FILE = "inputs/2024/day14.txt"
@@ -62,7 +62,7 @@ def parse(input_data):
 
 
 def part_1(input_data: str) -> int:
-    robots = parse(input_data)  # noqa
+    robots = parse(input_data)
     quadrants = defaultdict(int)
     for r in robots:
         for _ in range(1, 101):
@@ -78,8 +78,39 @@ def part_1(input_data: str) -> int:
 
 
 def part_2(input_data: str) -> int:
-    data = parse(input_data)  # noqa
-    return 0
+    robots = parse(input_data)
+    for i in range(1, 10000):
+        grid = [["." for _ in range(GRID_X)] for _ in range(GRID_Y)]
+        for r in robots:
+            r.move()
+            grid[r.py][r.px] = "#"
+        seen = set()
+        parallel = 0
+        for x in range(GRID_X):
+            for y in range(GRID_Y):
+                if grid[y][x] == "#" and (x, y) not in seen:
+                    parallel += 1
+                    q = deque([(x, y)])
+                    while q:
+                        xx, yy = q.popleft()
+                        if (xx, yy) in seen:
+                            continue
+
+                        seen.add((xx, yy))
+                        for dx, dy in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
+                            xxx = xx + dx
+                            yyy = yy + dy
+                            if (
+                                0 <= xxx < GRID_X
+                                and 0 <= yyy < GRID_Y
+                                and grid[yyy][xxx] == "#"
+                            ):
+                                q.append((xxx, yyy))
+
+        if parallel <= 200:
+            # print grid
+            print("\n".join(["".join(row) for row in grid]))
+            return i
 
 
 def test__part1_sample():
@@ -116,11 +147,8 @@ def test__part1():
 #     input_data = read_input(INPUT_FILE)
 #     assert part_2(input_data) == 0
 
+
 if __name__ == "__main__":
-    test__part1_sample()
-    # test__part1()
-    # test__part2_sample()
-    # test__part2()
-    # input_data = read_input(INPUT_FILE)
-    # print(part_1(input_data))
-    # print(part_2(input_data))
+    input_data = read_input(INPUT_FILE)
+    print(part_1(input_data))
+    print(part_2(input_data))
