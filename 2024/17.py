@@ -1,3 +1,4 @@
+from collections import deque
 import re
 
 INPUT_FILE = "inputs/2024/day17.txt"
@@ -10,7 +11,7 @@ def read_input(name: str) -> str:
 
 
 def ints(s):
-    return [int(x) for x in re.findall("-?\d+", s)]
+    return [int(x) for x in re.findall(r"-?\d+", s)]
 
 
 def parse(input_data):
@@ -21,7 +22,7 @@ def parse(input_data):
     return a, program
 
 
-def solve(a, program, part2=False):
+def solve(a, program):
     b = 0
     c = 0
     ip = 0
@@ -66,9 +67,6 @@ def solve(a, program, part2=False):
             ip += 2
         elif cmd == 5:
             out.append(int(combo % 8))
-            # if part2:
-            #     if program[len(out) - 1] != out[len(out) - 1]:
-            #         return out
             ip += 2
         elif cmd == 6:
             b = a // 2**combo
@@ -86,28 +84,58 @@ def part_1(input_data: str) -> int:
     return result
 
 
+def decompiled(a):
+    # 2,4,
+    b = a & 7
+
+    # 1,3,
+    b = b ^ 3
+
+    # 7,5,
+    c = a >> b
+
+    # 4,0,
+    b = b ^ c
+
+    # 1,3,
+    b = b ^ 3
+
+    # 0,3,
+    a = a >> 3
+
+    # 5,5,
+    out = b & 7
+
+    # 3,0
+    return (a, out)
+
+
 def part_2(input_data: str) -> int:
     _, program = parse(input_data)
 
-    a = 0o1  # 0
-    a = 0o2  # 1,0
-    a = 0o3  # 1,0
-    a = 0o4  # 2,1,0
-    a = 0o5  # 2,1,0
-    a = 0o6  # 3,1,0
-    a = 0o7  # 3,1,0
+    pending = deque([(len(program), 0)])
+    valid_values = []
 
-    a = 0o10  # 4,2,1,0
-    a = 0o11  # 4,2,1,0
-    a = 0o12  # 5,2,1,0
+    while pending:
+        index, expected_output = pending.popleft()
 
-    a = 0o100  # 0,0,0,4,2,1,0
-    a = 0o101  # 0,0,0,4,2,1,0
-    a = 0o102  # 1,0,0,4,2,1,0
+        if index == 0:
+            valid_values.append(expected_output)
+            continue
 
-    result = solve(a, program, part2=True)
-    result = ",".join(map(str, result))
-    return 0
+        next_index = index - 1
+        instruction = program[next_index]
+
+        for i in range(8):
+            next_value = (expected_output << 3) | i
+            output, instruction_output = decompiled(next_value)
+            if instruction_output == instruction and output == expected_output:
+                pending.append((next_index, next_value))
+
+    for v in valid_values:
+        result = solve(v, program)
+        if program == result:
+            return v
 
 
 def test__part1_sample():
@@ -126,26 +154,12 @@ def test__part1():
     assert part_1(input_data) == "1,5,7,4,1,6,0,3,0"
 
 
-# def test__part2_sample():
-#     input_data = """
-#     Register A: 729
-#     Register B: 0
-#     Register C: 0
+def test__part2():
+    input_data = read_input(INPUT_FILE)
+    assert part_2(input_data) == 108107574778365
 
-#     Program: 0,1,5,4,3,0
-#     """
-#     assert part_2(input_data) == 0
-
-
-# def test__part2():
-#     input_data = read_input(INPUT_FILE)
-#     assert part_2(input_data) == 0
 
 if __name__ == "__main__":
-    test__part1_sample()
-    test__part1()
-    test__part2_sample()
-    # test__part2()
-    # input_data = read_input(INPUT_FILE)
-    # print(part_1(input_data))
-    # print(part_2(input_data))
+    input_data = read_input(INPUT_FILE)
+    print(part_1(input_data))
+    print(part_2(input_data))
